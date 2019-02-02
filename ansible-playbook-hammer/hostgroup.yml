@@ -1,0 +1,44 @@
+---
+# bit hacky ..
+# maybe set up scap first
+# hammer hostgroup set-parameter --name "kt_activation_keys" --value "EL7-key-Devel" --hostgroup el7_group
+  - name: Create hostgroup in "{{ organization }}"
+    shell: |
+      hammer \
+        -u {{ foreman_username }} \
+        -p {{ foreman_password }} \
+        -s {{ foreman_server_url }} \
+        --verify-ssl {{ foreman_verify_ssl }} \
+        hostgroup info \
+        --organization '{{ organization  }}' \
+        --location '{{ location }}' \
+        --name '{{ hostgroup_name }}' \
+      || \
+      hammer \
+        -u {{ foreman_username }} \
+        -p {{ foreman_password }} \
+        -s {{ foreman_server_url }} \
+        --verify-ssl {{ foreman_verify_ssl }} \
+        hostgroup create \
+        --organization '{{ organization  }}' \
+        --location '{{ location }}' \
+        --name '{{ hostgroup_name }}' \
+        --description 'Host group for CentOS 7 servers' \
+        --lifecycle-environment '{{ default_lifecycle }}' \
+        --content-view '{{ content_view_name }}' \
+        --content-source '{{ default_proxy }}' \
+        --environment '{{ puppet_env }}' \
+        --puppet-proxy '{{ default_proxy }}' \
+        --puppet-ca-proxy '{{ default_proxy }}' \
+        --compute-resource '{{ compute_resource_name  }}' \
+        --domain '{{ organization }}' \
+        --subnet '{{ location  }}.{{ organization }}' \
+        --architecture 'x86_64' \
+        --operatingsystem '{{ centos_version }}' \
+        --medium '{{ centos_medium_name }}' \
+        --partition-table '{{ ks_ptable_name }}' \
+        --pxe-loader 'PXELinux BIOS' \
+        --openscap-proxy-id 1 \
+        --root-pass '{{ root_pass }}'
+    args:
+      executable: /bin/bash

@@ -1,0 +1,323 @@
+---
+- name: Create CentOS 7 base_x86_64 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: base_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: http://mirror.centos.org/centos/7/os/x86_64/
+    content_credential: RPM-GPG-KEY-CentOS-7
+    state: present
+
+- name: Create CentOS 7 extras_x86_64 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: extras_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: http://mirror.centos.org/centos/7/extras/x86_64/
+    content_credential: RPM-GPG-KEY-CentOS-7
+    state: present
+
+- name: Create CentOS 7 updates_x86_64 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: updates_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: http://mirror.centos.org/centos/7/updates/x86_64/
+    content_credential: RPM-GPG-KEY-CentOS-7
+    state: present
+
+- name: Create CentOS 7 epel yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: epel_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://dl.fedoraproject.org/pub/epel/7Server/x86_64/
+    content_credential: RPM-GPG-KEY-EPEL-7Server
+    state: present
+
+- name: Create MySQL 5.7 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: mysql_57_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/
+    content_credential: RPM-GPG-KEY-mysql
+    state: present
+
+- name: Create Katello Agent yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: katello_agent_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://fedorapeople.org/groups/katello/releases/yum/latest/client/el7/x86_64/
+    state: present
+
+- name: Create Puppet 5 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: puppet_5_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://yum.puppetlabs.com/puppet5/el/7/x86_64/
+    content_credential: RPM-GPG-KEY-puppet
+    state: present
+
+- name: Create MongoDB 3.6 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: mongodb_36_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.6/x86_64/
+    content_credential: RPM-GPG-KEY-mongodb-36
+    state: present
+
+- name: Create Elasticsearch 5.x yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: elasticsearch_5_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://artifacts.elastic.co/packages/5.x/yum
+    content_credential: GPG-KEY-elasticsearch
+    state: present
+
+- name: Create Graylog 2.4 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: graylog_24_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://packages.graylog2.org/repo/el/stable/2.4/x86_64/
+    content_credential: RPM-GPG-KEY-graylog
+    state: present
+
+- name: Create Foreman 1.19 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: foreman_119_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://yum.theforeman.org/releases/1.19/el7/x86_64/
+    content_credential: RPM-GPG-KEY-foreman
+    state: present
+
+- name: Create Foreman Plugins 1.19 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: foreman_plugins_119_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://yum.theforeman.org/plugins/1.19/el7/x86_64/
+    state: present
+
+- name: Create Bacula yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: slaanesh_bacula_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://copr-be.cloud.fedoraproject.org/results/slaanesh/Bacula/epel-7-x86_64/
+    content_credential: RPM-GPG-KEY-slaanesh-bacula
+    state: present
+
+- name: Create Lynis yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: lynis
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://packages.cisofy.com/community/lynis/rpm/
+    content_credential: RPM-GPG-KEY-cisofy
+    state: present
+
+- name: Create Remi PHP 5.6 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: remi_php_56_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://mirrors.ukfast.co.uk/sites/remi/enterprise/7/php56/x86_64/
+    content_credential: RPM-GPG-KEY-remi
+    state: present
+
+- name: Create Remi PHP 7.2 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: remi_php_72_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://mirrors.ukfast.co.uk/sites/remi/enterprise/7/php72/x86_64/
+    content_credential: RPM-GPG-KEY-remi
+    state: present
+
+- name: Create Remi PHP Safe yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: remi_safe_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: https://mirrors.ukfast.co.uk/sites/remi/enterprise/7/safe/x86_64/
+    content_credential: RPM-GPG-KEY-remi
+    state: present
+
+- name: Create Zabbix 3.0 yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: zabbix_30_x86_64
+    product: "{{ katello_product }}"
+    content_type: yum
+    url: http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/
+    content_credential: RPM-GPG-KEY-ZABBIX
+    state: present
+
+# fails once ?
+- name: Create a sync plan
+  katello_sync_plan:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: Weekly
+    organization: "{{ organization }}"
+    enabled: true
+    interval: weekly
+    sync_date: "2018-01-06 02:00:00" # every sunday at 2am
+    products:
+      - name: "{{ katello_product }}"
+
+- name: Create content view "{{ content_view_name }}"
+  katello_content_view:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "{{ content_view_name }}"
+    organization: "{{ organization }}"
+    repositories:
+      - name: base_x86_64
+        product: "{{ katello_product }}"
+      - name: extras_x86_64
+        product: "{{ katello_product }}"
+      - name: updates_x86_64
+        product: "{{ katello_product }}"
+      - name: epel_x86_64
+        product: "{{ katello_product }}"
+      - name: mysql_57_x86_64
+        product: "{{ katello_product }}"
+      - name: katello_agent_x86_64
+        product: "{{ katello_product }}"
+      - name: puppet_5_x86_64
+        product: "{{ katello_product }}"
+      - name: mongodb_36_x86_64
+        product: "{{ katello_product }}"
+      - name: elasticsearch_5_x86_64
+        product: "{{ katello_product }}"
+      - name: graylog_24_x86_64
+        product: "{{ katello_product }}"
+      - name: foreman_119_x86_64
+        product: "{{ katello_product }}"
+      - name: foreman_plugins_119_x86_64
+        product: "{{ katello_product }}"
+      - name: slaanesh_bacula_x86_64
+        product: "{{ katello_product }}"
+      - name: remi_php_56_x86_64
+        product: "{{ katello_product }}"
+      - name: remi_php_72_x86_64
+        product: "{{ katello_product }}"
+      - name: remi_safe_x86_64
+        product: "{{ katello_product }}"
+      - name: zabbix_30_x86_64
+        product: "{{ katello_product }}"
+
+- name: Disable mirror-on-sync for base/extras/updates/epel
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      repository update --name base_x86_64 --product {{ katello_product }} --mirror-on-sync false --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      repository update --name extras_x86_64 --product {{ katello_product }} --mirror-on-sync false --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      repository update --name updates_x86_64 --product {{ katello_product }} --mirror-on-sync false --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      repository update --name epel_x86_64 --product {{ katello_product }} --mirror-on-sync false --organization {{ organization }}

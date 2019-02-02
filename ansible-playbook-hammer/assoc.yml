@@ -1,0 +1,11 @@
+---
+- name: Associate {{ ks_template_name }} with {{ centos_version }}
+  foreman_os_default_template:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    operatingsystem: "{{ centos_version }}"
+    template_kind: provision
+    provisioning_template: "{{ ks_template_name }}"
+    state: present

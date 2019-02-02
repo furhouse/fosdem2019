@@ -1,0 +1,45 @@
+# using a shell gitlab-runner w/ sudo access and distrobuilder pre-installed
+variables:
+  # CENTOS_BUILD_DISABLED: "true"
+  # CENTOS_IMPORT_DISABLED: "true"
+  QEMU_URI: qemu+tcp://libvirt.10.132.8.98.nip.io/system
+  # CI_DEBUG_TRACE: "true"
+
+# Cache ISO/QCOW2 in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - packer_cache/
+  - centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.qcow2
+
+stages:
+  - build
+  - import
+
+before_script:
+  - rm -rf output-qemu
+
+build-centos76-qemu:
+  stage: build
+  tags:
+    - privileged-qemu-builder
+  script:
+    - packer version
+    - packer build -var-file=centos76-foreman.json centos7-base.json
+    - mv output-qemu/centos76-foreman.qcow2 ./centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.qcow2
+  artifacts:
+    paths:
+        - centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.qcow2
+    expire_in: 25min
+
+import-centos76-qemu:
+  stage: import
+  tags:
+    - privileged-qemu-builder
+  script:
+    - size=$(stat -Lc%s centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.qcow2)
+    - virsh -c $QEMU_URI vol-create-as data centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA} $size --format qcow2
+    - virsh -c $QEMU_URI vol-upload --pool data centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA} centos76-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}.qcow2
+  except:
+    variables:
+      - $CENTOS_IMPORT_DISABLED

@@ -1,0 +1,65 @@
+---
+# Fails after initial creation of hostcollection
+- name: Create hostcollection
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      host-collection create --name {{ hostcollection_name }} --organization {{ organization }}
+
+# Fails after initial assignment
+- name: Add subscription to activation-keys
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-subscription --name EL7-key --quantity 1 --subscription-id 1 --organization {{ organization  }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-subscription --name EL7-key-Test --quantity 1 --subscription-id 1 --organization {{ organization  }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-subscription --name EL7-key-Devel --quantity 1 --subscription-id 1 --organization {{ organization  }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-subscription --name EL7-key-Production --quantity 1 --subscription-id 1 --organization {{ organization  }}
+
+- name: Add activation-keys to hostcollection
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-host-collection --host-collection {{ hostcollection_name }} --name EL7-key --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-host-collection --host-collection {{ hostcollection_name }} --name EL7-key-Test --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-host-collection --host-collection {{ hostcollection_name }} --name EL7-key-Devel --organization {{ organization }}
+
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      activation-key add-host-collection --host-collection {{ hostcollection_name }} --name EL7-key-Production --organization {{ organization }}
+
+- name: Assign activation-key to hostgroup
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      hostgroup set-parameter --name kt_activation_keys --value EL7-key-Devel --hostgroup {{ hostgroup_name }}
+
+- name: Assign medium to organization and label
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      medium update --name '{{ centos_medium_name }}' --organization {{ organization }} --location {{ location }}
+
+- name: Assign medium mirror to OS
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      os update --id 1 --media '{{ centos_medium_name }}'
+
+- name: Associate kickstart template with OS
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      template add-operatingsystem --id 127 --operatingsystem-id 1
+
+# - name: Set default kickstart template for CentOS
+#   shell: |
+#     hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+#       os set-default-template --id 1 --config-template-id 127
+
+- name: Assign ptable
+  shell: |
+    hammer -u {{ foreman_username }} -p {{ foreman_password }} -s {{ foreman_server_url }} --verify-ssl {{ foreman_verify_ssl }} \
+      --verify-ssl {{ foreman_verify_ssl }} partition-table update --name '{{ ks_ptable_name }}' --operatingsystems '{{ centos_version }}'

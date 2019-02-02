@@ -1,0 +1,4 @@
+rpm-gpg-import
+foreman-ansible-modules
+Gemfile.lock
+*.log

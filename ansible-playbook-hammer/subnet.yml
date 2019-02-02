@@ -1,0 +1,36 @@
+---
+# bit hacky ..
+# doesnt assign remote execution proxy
+# where do i fetch the domain/tftp id from?
+- name: Create subnet
+  shell: |
+    hammer \
+      -u {{ foreman_username }} \
+      -p {{ foreman_password }} \
+      -s {{ foreman_server_url }} \
+      --verify-ssl {{ foreman_verify_ssl }} \
+      subnet info \
+      --name '{{ location }}.{{ organization }}' | grep '{{ organization }}' \
+    || \
+    hammer \
+      -u {{ foreman_username }} \
+      -p {{ foreman_password }} \
+      -s {{ foreman_server_url }} \
+      --verify-ssl {{ foreman_verify_ssl }} \
+      subnet create \
+      --organizations '{{ organization }}' \
+      --locations '{{ location }}' \
+      --name '{{ location  }}.{{ organization  }}' \
+      --network-type 'IPv4' \
+      --network '{{ subnet_ip }}' \
+      --mask '{{ subnet_mask }}' \
+      --gateway '{{ subnet_gateway }}' \
+      --dns-primary '{{ subnet_dns_primary }}' \
+      --boot-mode 'DHCP' \
+      --ipam 'None' \
+      --domain-ids 34 \
+      --tftp-id 1 \
+      --template-id 1 \
+      --discovery-id 1
+  args:
+    executable: /bin/bash

@@ -1,0 +1,23 @@
+---
+- name: Sync all repositories in "{{ organization }}"
+  when: sync_repos | default(false)
+  shell: |
+    for i in $(hammer \
+      -u {{ foreman_username }} \
+      -p {{ foreman_password }} \
+      -s {{ foreman_server_url }} \
+      --verify-ssl {{ foreman_verify_ssl }} \
+      repository list \
+      --organization '{{ organization }}' | awk '/{{ katello_product }}/ { print $1 }'
+    )
+      do hammer \
+        -u {{ foreman_username }} \
+        -p {{ foreman_password }} \
+        -s {{ foreman_server_url }} \
+        --verify-ssl {{ foreman_verify_ssl }} \
+        repository synchronize --product "{{ katello_product }}" --id $i
+    done
+  args:
+    executable: /bin/bash
+  async: 7200
+  poll: 15

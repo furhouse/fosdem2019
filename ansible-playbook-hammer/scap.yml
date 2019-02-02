@@ -1,0 +1,7 @@
+---
+- name: Create Default SCAP Content
+  shell:
+    cmd: |
+      foreman-rake foreman_openscap:bulk_upload:default
+  args:
+    creates: /usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml

@@ -1,0 +1,28 @@
+---
+- name: Create custom yum repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: zoo
+    product: "{{ katello_product }}"
+    organization: "{{ organization }}"
+    content_type: yum
+    url: https://jlsherrill.fedorapeople.org/fake-repos/needed-errata/
+    state: present
+
+- name: Create custom docker repository
+  katello_repository:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: alpine
+    product: "{{ katello_product }}"
+    content_type: docker
+    url: https://registry-1.docker.io/
+    docker_upstream_name: library/alpine
+    state: present
+

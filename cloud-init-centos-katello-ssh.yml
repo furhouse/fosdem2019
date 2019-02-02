@@ -1,0 +1,57 @@
+#cloud-config
+hostname: fosdem
+fqdn: fosdem.10.132.8.100.nip.io
+manage_etc_hosts: true
+users:
+  - name: root
+    ssh_authorized_keys:
+      - ssh-rsa AAAA... foo@bar
+  - name: centos
+    groups: sudo
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - ssh-rsa AAAA... foo@bar
+write_files:
+- path: /root/bootstrap_foreman_installer.sh
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    /usr/sbin/foreman-installer --scenario "katello" \
+      --foreman-initial-organization "lxd" \
+      --foreman-initial-location "wim-ws2" \
+      --foreman-admin-email "wim@500k.nl" \
+      --foreman-admin-username "admin" \
+      --foreman-proxy-dhcp "false" \
+      --foreman-proxy-dns "false" \
+      --foreman-proxy-tftp "true" \
+      --foreman-proxy-puppet "true" \
+      --foreman-proxy-puppetca "true" \
+      --foreman-puppetrun "true" \
+      --foreman-proxy-puppetrun-provider "ssh" \
+      --puppet-runinterval "3600" \
+      --puppet-show-diff "true" \
+      --enable-foreman-compute-libvirt \
+      --enable-foreman-cli-openscap \
+      --enable-foreman-plugin-openscap \
+      --enable-foreman-proxy-plugin-openscap \
+      --enable-foreman-plugin-hooks \
+      --enable-foreman-plugin-default-hostgroup \
+      --enable-foreman-cli-discovery \
+      --enable-foreman-plugin-discovery \
+      --enable-foreman-proxy-plugin-discovery \
+      --enable-foreman-cli-templates \
+      --enable-foreman-plugin-templates \
+      --enable-foreman-cli-remote-execution \
+      --enable-foreman-plugin-remote-execution \
+      --enable-foreman-proxy-plugin-remote-execution-ssh \
+      --verbose
+runcmd:
+  - yum -y localinstall http://fedorapeople.org/groups/katello/releases/yum/3.10/katello/el7/x86_64/katello-repos-latest.rpm
+  - yum -y localinstall http://yum.theforeman.org/releases/1.20/el7/x86_64/foreman-release.rpm
+  - yum -y localinstall https://yum.theforeman.org/client/1.20/el7/x86_64/foreman-client-release.rpm
+  - yum -y localinstall https://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm
+  - yum -y localinstall http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  - yum -y install foreman-release-scl python-django
+  - yum -y update
+  - yum -y install katello
+  - bash /root/bootstrap_foreman_installer.sh

@@ -1,0 +1,221 @@
+---
+- name: Create local RPM GPG directory
+  file:
+    path: "{{ playbook_dir }}/rpm-gpg-import/"
+    state: directory
+
+- name: Download RPM-GPG-KEY-CentOS-7
+  get_url:
+    url: http://mirror.centos.org/centos/7/os/x86_64/RPM-GPG-KEY-CentOS-7
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-CentOS-7"
+    mode: 0440
+    checksum: md5:c45e7e322681292ce4c1d2a6d392c4b5
+
+- name: Create katello client RPM-GPG-KEY-CentOS-7 key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-CentOS-7"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-CentOS-7') }}"
+
+- name: Download RPM-GPG-KEY-EPEL-7Server
+  get_url:
+    url: https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-EPEL-7Server"
+    mode: 0440
+    checksum: md5:58fa8ae27c89f37b08429f04fd4a88cc
+
+- name: Create katello client RPM-GPG-KEY-EPEL-7Server key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-EPEL-7Server"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-EPEL-7Server') }}"
+
+- name: Download RPM-GPG-KEY-mysql
+  get_url:
+    url: https://repo.mysql.com/RPM-GPG-KEY-mysql
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-mysql"
+    mode: 0440
+    checksum: md5:472a4a4867adfd31a68e8c9bbfacc23d
+
+- name: Create katello client RPM-GPG-KEY-mysql key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-mysql"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-mysql') }}"
+
+- name: Download RPM-GPG-KEY-puppet
+  get_url:
+    url: https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-puppet"
+    mode: 0440
+    checksum: md5:16e3e148bc861ee66906e475f8342f81
+
+- name: Create katello client RPM-GPG-KEY-puppet key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-puppet"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-puppet') }}"
+
+- name: Download RPM-GPG-KEY-graylog
+  get_url:
+    url: https://raw.githubusercontent.com/Graylog2/fpm-recipes/master/recipes/graylog-repository/files/rpm/RPM-GPG-KEY-graylog
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-graylog"
+    mode: 0440
+    checksum: md5:b9a593c0d80ccd4098f0b4c8cafc3312
+
+- name: Create katello client RPM-GPG-KEY-graylog key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-graylog"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-graylog') }}"
+
+- name: Download RPM-GPG-KEY-mongodb-36
+  get_url:
+    url: https://www.mongodb.org/static/pgp/server-3.6.asc
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-mongodb-36"
+    mode: 0440
+    checksum: md5:183cab88e8b62e037175c8116dd370b3
+
+- name: Create katello client RPM-GPG-KEY-mongodb key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-mongodb-36"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-mongodb-36') }}"
+
+- name: Download GPG-KEY-elasticsearch
+  get_url:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    dest: "{{ playbook_dir }}/rpm-gpg-import/GPG-KEY-elasticsearch"
+    mode: 0440
+    checksum: md5:41c14e54aa0d201ae680bb34c199be98
+
+- name: Create katello client GPG-KEY-elasticsearch key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "GPG-KEY-elasticsearch"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/GPG-KEY-elasticsearch') }}"
+
+- name: Download RPM-GPG-KEY-foreman
+  get_url:
+    url: http://yum.theforeman.org/releases/1.19/RPM-GPG-KEY-foreman
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-foreman-1-19"
+    mode: 0440
+    checksum: md5:9ff7959b34e3ca3473e2ff1784f3b24a
+
+- name: Create katello client RPM-GPG-KEY-foreman key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-foreman"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-foreman-1-19') }}"
+
+- name: Download slaanesh-bacula
+  get_url:
+    url: https://copr-be.cloud.fedoraproject.org/results/slaanesh/Bacula/pubkey.gpg
+    dest: "{{ playbook_dir }}/rpm-gpg-import/slaanesh-bacula.gpg"
+    mode: 0440
+    checksum: md5:d16e5cb2923e514f773a4d1c3a8436cc
+
+- name: Create katello client slaanesh-bacula key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-slaanesh-bacula"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/slaanesh-bacula.gpg') }}"
+
+- name: Download Remi GPG key for PHP 7.x
+  get_url:
+    url: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-remi"
+    mode: 0440
+    checksum: md5:3abb4e5a7b1408c888e19f718c012630
+
+- name: Create katello client RPM-GPG-KEY-remi key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-remi"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-remi') }}"
+
+- name: Download Lynis GPG key
+  get_url:
+    url: https://packages.cisofy.com/keys/cisofy-software-rpms-public.key
+    dest: "{{ playbook_dir }}/rpm-gpg-import/cisofy-software-rpms-public.key"
+    mode: 0440
+    checksum: md5:4249838d30c10595815d1eec943e6fbd
+
+- name: Create katello client Lynis key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-cisofy"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/cisofy-software-rpms-public.key') }}"
+
+- name: Download Zabbix GPG key
+  get_url:
+    url: http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
+    dest: "{{ playbook_dir }}/rpm-gpg-import/RPM-GPG-KEY-ZABBIX"
+    mode: 0440
+    checksum: md5:090a55523e9da761ae5dce8b247ec22f
+
+- name: Create katello client Zabbix key
+  katello_content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl  }}"
+    organization: "{{ organization }}"
+    name: "RPM-GPG-KEY-ZABBIX"
+    content_type: gpg_key
+    content: "{{ lookup('file', './rpm-gpg-import/RPM-GPG-KEY-ZABBIX') }}"

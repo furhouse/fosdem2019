@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  tasks:
+    # - name: Clone foreman-ansible-modules
+    #   git:
+    #     repo: https://github.com/theforeman/foreman-ansible-modules.git
+    #     dest: "{{ playbook_dir }}/foreman-ansible-modules"
+    - name: Clone foreman-ansible-modules private
+      git:
+        repo: git@gitlab.10.132.8.93.nip.io:root/foreman-ansible-modules.git
+        version: 1-can-t-manage-content-credentials-and-content-view-versions
+        dest: "{{ playbook_dir }}/foreman-ansible-modules"
+
+    - name: Install pip dependencies
+      pip:
+        requirements: "{{ playbook_dir }}/foreman-ansible-modules/requirements-dev.txt"
+        extra_args: "--user"
+
+    - name: Install gem dependencies
+      bundler:
+        state: present

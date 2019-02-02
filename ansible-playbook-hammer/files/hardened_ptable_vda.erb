@@ -1,0 +1,28 @@
+<%#
+kind: ptable
+name: Kickstart hardened 32GB virtio
+oses:
+- CentOS
+- Fedora
+- RedHat
+%>
+
+# System bootloader configuration
+bootloader --location=mbr --boot-drive=vda --timeout=3
+# Partition clearing information
+clearpart --all --drives=vda
+zerombr 
+
+# Disk partitioning information
+part /boot --fstype="xfs" --ondisk=vda --size=1024 --label=boot --fsoptions="rw,nodev,noexec,nosuid"
+
+# 30GB physical volume
+part pv.01  --fstype="lvmpv" --ondisk=vda --size=30720
+volgroup vg_os pv.01
+
+logvol /        --fstype="xfs"  --size=4096 --vgname=vg_os --name=lv_root
+logvol /home    --fstype="xfs"  --size=512  --vgname=vg_os --name=lv_home --fsoptions="rw,nodev,nosuid"
+logvol /tmp     --fstype="xfs"  --size=1024 --vgname=vg_os --name=lv_tmp  --fsoptions="rw,nodev,noexec,nosuid"
+logvol /var     --fstype="xfs"  --size=6144 --vgname=vg_os --name=lv_var  --fsoptions="rw,nosuid"
+logvol /var/log --fstype="xfs"  --size=512  --vgname=vg_os --name=lv_log  --fsoptions="rw,nodev,noexec,nosuid"
+logvol swap     --fstype="swap" --size=2048 --vgname=vg_os --name=lv_swap --fsoptions="swap"

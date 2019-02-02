@@ -1,0 +1,70 @@
+---
+- name: Create puppet module directory
+  file:
+    path: /root/puppet-modules
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Download r10k puppet module
+  shell:
+    cmd: |
+      puppet module install puppet-r10k --version 6.7.0 --modulepath /root/puppet-modules
+  args:
+    creates: /root/puppet-modules/r10k/metadata.json
+
+- name: Create r10k manifest
+  copy:
+    dest: /root/puppet-modules/r10k.pp
+    owner: root
+    group: root
+    mode: 0400
+    content: |
+      # Managed with Ansible, changes are overwritten
+
+      class { '::r10k':
+        sources           => {
+          'puppet' => {
+            'remote'  => hiera('profile::r10k::control_repo_url', '{{ control_repo_url }}'),
+            'basedir' => "${::settings::codedir}/environments",
+            'prefix'  => false,
+          },
+        },
+      }
+
+      class { '::r10k::webhook::config':
+        use_mcollective  => hiera('profile::r10k::use_mco', false),
+        user             => hiera('profile::r10k::webhook_user', 'r10khook'),
+        pass             => hiera('profile::r10k::webhook_pass', 'r10khook'),
+        public_key_path  => "${::settings::signeddir}/${facts['fqdn']}.pem",
+        private_key_path => "${::settings::privatekeydir}/${facts['fqdn']}.pem",
+      }
+
+      class { '::r10k::webhook':
+        user  => hiera('profile::r10k::local_exec_user', 'root'),
+        group => hiera('profile::r10k::local_exec_group', '0'),
+      }
+
+      Class['::r10k::webhook::config'] -> Class['::r10k::webhook']
+
+- name: Apply r10k manifest
+  shell:
+    cmd: |
+      puppet apply /root/puppet-modules/r10k.pp --modulepath /root/puppet-modules
+  args:
+    creates: /etc/puppetlabs/r10k/r10k.yaml
+
+- name: Run r10k
+  shell:
+    cmd: |
+      r10k deploy environment -pv
+  args:
+    creates: /etc/puppetlabs/code/environments/production/Puppetfile
+
+- name: Import foreman-rake puppet environments and classes
+  shell:
+    cmd: |
+      foreman-rake -s puppet:import:puppet_classes[development]
+      foreman-rake -s puppet:import:puppet_classes[production]
+      foreman-rake -s puppet:import:environments_only

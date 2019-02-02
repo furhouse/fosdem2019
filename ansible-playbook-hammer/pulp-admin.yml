@@ -1,0 +1,34 @@
+---
+- name: Install required yum packages for pulp-admin
+  package: name={{ item }} state=present
+  with_items:
+    - pulp-admin-client
+
+- name: Create pulp config directory
+  file:
+    path: /root/.pulp
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Copy pulp certificate
+  shell: |
+    cat /etc/pki/katello/certs/pulp-client.crt /etc/pki/katello/private/pulp-client.key > /root/.pulp/user-cert.pem
+  args:
+    executable: /bin/bash
+    creates: /root/.pulp/user-cert.pem
+
+- name: Create pulp admin config
+  copy:
+    dest: /root/.pulp/admin.conf
+    owner: root
+    group: root
+    mode: 0400
+    content: |
+      # Managed with Ansible, changes are overwritten
+      [server]
+      host: {{ default_proxy }}
+      [client]
+      [filesystem]
+      [output]

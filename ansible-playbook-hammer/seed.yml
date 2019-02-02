@@ -1,0 +1,127 @@
+---
+- hosts: katello-host
+  vars_files:
+    - server_vars.yml
+  tasks:
+
+    # hardcoded for root user
+    - include_tasks: ssh.yml
+      when: configure_ssh | default(false)
+      tags:
+        - setup
+        - katello
+
+    # hardcoded importing of development/production classes
+    - include_tasks: r10k.yml
+      when: configure_r10k | default(false)
+      tags:
+        - setup
+        - katello
+
+    # run puppet to sync libs
+    - name: Run puppet and timeout in 5 minutes
+      when: run_puppet | default(false)
+      puppet:
+        timeout: 5m
+
+    # set up pulp-admin to check task status later
+    - include_tasks: pulp-admin.yml
+      name: Set up pulp admin config
+
+- hosts: localhost
+  vars_files:
+    - server_vars.yml
+  tasks:
+
+    #
+    - include_tasks: base_katello.yml
+      tags:
+        - setup
+        - katello
+
+    # Associate provision template with centos
+    - include_tasks: assoc.yml
+      tags:
+        - setup
+        - katello
+
+      # Create a subnet
+      # hardcoded ids for domain/tftp, bootmode -> dhcp, ipam -> None
+    - include_tasks: subnet.yml
+      tags:
+        - setup
+        - foreman
+
+    # Download and add GPG keys
+    - include_tasks: keys.yml
+      tags:
+        - setup
+        - foreman
+
+    # Create katello repositories, attach keys, create the sync plan,
+    # create content view, disable mirror-on-sync for
+    # base/extras/updates/epel¬
+    # Run twice because of sync plan creation fail
+    - include_tasks: repos.yml
+      tags:
+        - setup
+        - foreman
+
+    # Sync all repositories
+    # Hammer CLI cmd
+    - include_tasks: repo-sync.yml
+      tags:
+        - setup
+        - foreman
+
+    # Create content view versions and activation keys
+    - include_tasks: cvv.yml
+      tags:
+        - setup
+        - foreman
+
+    # Create environment
+    # Hammer CLI cmd
+    - include_tasks: env.yml
+      tags:
+        - setup
+        - foreman
+
+    # Create hostgroup
+    # Hammer CLI cmd
+    # hardcoded values (ids,strings, also sane stuff like pxe bios)
+    - include_tasks: hostgroup.yml
+      tags:
+        - setup
+        - foreman
+
+    # Hammer CLI cmd
+    # hardcoded IDs -> OS (1), template id 127 (kickstart custom)
+    # one-shot commands which either fail on a second run or aren't supported
+    # via fam
+    - include_tasks: dangling.yml
+      when: dangling | default(false)
+      tags:
+        - setup
+        - foreman
+
+- hosts: katello-host
+  vars_files:
+    - server_vars.yml
+  tasks:
+
+    # Configure foreman backups
+    - include_tasks: cron_backup.yml
+      when: configure_backups | default(false)
+      tags:
+        - setup
+        - katello
+
+    # Configure errata requirements and script
+    # downloading files happens every playbook execution
+    # maybe just move downloading to some script
+    - include_tasks: configure_errata.yml
+      when: configure_errata | default(false)
+      tags:
+        - setup
+        - katello

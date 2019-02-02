@@ -1,0 +1,149 @@
+---
+
+- name: Create the default org
+  foreman_organization:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "{{ organization }}"
+    state: present
+
+- name: Create a custom product
+  katello_product:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    organization: "{{ organization }}"
+    name: "{{ katello_product }}"
+    state: present
+
+- name: Create lifecycle environments
+  block:
+    - name: Create lifecycle environment Devel
+      katello_lifecycle_environment:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        organization: "{{ organization }}"
+        name: Devel
+        prior: Library
+    - name: Create lifecycle environment Test
+      katello_lifecycle_environment:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        organization: "{{ organization }}"
+        name: Test
+        prior: Devel
+    - name: Create lifecycle environment Production
+      katello_lifecycle_environment:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        organization: "{{ organization }}"
+        name: Production
+        prior: Test
+
+- name: Create the default location
+  foreman_location:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "{{ location }}"
+    state: present
+
+- name: Create the default domain
+  foreman_domain:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "{{ organization }}"
+    description: "{{ default_domain }}"
+    locations:
+      - "{{ location }}"
+    organizations:
+      - "{{ organization }}"
+    state: present
+
+# cant do foreman subnets
+
+- name: Create a Partition Template from a file
+  foreman_ptable:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    locations:
+      - "{{ location }}"
+    organizations:
+      - "{{ organization }}"
+    file_name: files/hardened_ptable_vda.erb
+    os_family: Redhat
+    state: present
+
+- name: Create a user mgmt snippet from a file
+  foreman_provisioning_template:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    file_name: files/create_users_custom.erb
+    kind: snippet
+    locations:
+      - "{{ location }}"
+    organizations:
+      - "{{ organization }}"
+    state: present
+
+- name: Create a Provisioning Template from a file
+  foreman_provisioning_template:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    file_name: files/kickstart_custom.erb
+    kind: provision
+    locations:
+      - "{{ location }}"
+    organizations:
+      - "{{ organization }}"
+    state: present
+
+- name: Create libvirt compute resource
+  foreman_compute_resource:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: '{{ compute_resource_name }}'
+    provider: libvirt
+    display_type: '{{ compute_resource_display }}'
+    provider_auth:
+      url: "{{ libvirt_url }}"
+    locations:
+      - "{{ location }}"
+    organizations:
+      - "{{ organization }}"
+    state: present
+
+# cant do foreman compute profile
+
+- name: Create a Global Parameter
+  foreman_global_parameter:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "enable-puppetlabs-puppet5-repo"
+    value: "true"
+    state: present_with_defaults
+
+# cant do foreman environments
+# cant do foreman hostgroups

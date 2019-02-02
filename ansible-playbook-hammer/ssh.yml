@@ -1,0 +1,35 @@
+---
+- name: Generate ssh key for root user
+  user:
+    name: root
+    generate_ssh_key: yes
+
+
+- name: Show public key of root user
+  shell: cat /root/.ssh/id_rsa.pub
+  register: cat
+
+- debug: var=cat.stdout_lines
+
+# Add the public key to gitlab
+- pause:
+    prompt: "Copy the output and add the public key to gitlab."
+    minutes: 1
+
+- name: Create ssh config file for gitlab
+  copy:
+    dest: /root/.ssh/config
+    owner: root
+    group: root
+    mode: 0600
+    content: |
+      # Managed with Ansible, changes are overwritten
+      Host {{ git_url }}
+        Port {{ git_ssh_port }}
+
+- name: Set up ssh known hosts for gitlab
+  shell:
+    cmd: |
+      ssh-keyscan -p {{ git_ssh_port }} {{ git_url }} >> /root/.ssh/known_hosts
+  args:
+    creates: /root/.ssh/known_hosts

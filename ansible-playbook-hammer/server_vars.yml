@@ -1,0 +1,55 @@
+---
+foreman_username: admin
+foreman_password: Tot5EtHY7U6hgjYo
+foreman_server_url: https://fosdem.10.132.8.100.nip.io
+foreman_verify_ssl: false
+
+organization: lxd
+location: wim-ws2
+root_pass: PleaseChangeMe
+
+default_proxy: fosdem.10.132.8.100.nip.io
+
+# why does this change serverside?
+# centos_version: CentOS Linux 7.6.1810
+centos_version: CentOS 7.6.1810
+centos_medium_name: CentOS mirror
+ks_ptable_name: Kickstart hardened 32GB virtio
+ks_template_name: Kickstart custom
+
+default_lifecycle: Library
+default_environment: development
+
+libvirt_url: qemu+tcp://libvirt.10.132.8.10.nip.io/system
+
+git_url: gitlab.10.132.8.93.nip.io
+git_ssh_port: 2222
+
+subnet_ip: 10.132.8.0
+subnet_mask: 255.255.255.0
+subnet_gateway: 10.132.8.1
+subnet_dns_primary: 10.132.8.1
+
+puppet_env: development
+
+default_domain: LXD Domain
+
+content_view_name: cv1
+
+hostgroup_name: el7_group
+hostcollection_name: el7_collection
+
+# compute_resource_provider: libvirt
+compute_resource_name: libvirt
+compute_resource_display: vnc
+
+katello_product: custom
+
+# configure_ssh: true
+# configure_r10k: true
+control_repo_url: ssh://git@gitlab.10.132.8.93.nip.io/puppet/control-repo.git
+# run_puppet: true
+# sync_repos: true
+# dangling: true
+# configure_backups: true
+# configure_errata: true

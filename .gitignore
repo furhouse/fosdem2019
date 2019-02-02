@@ -1,0 +1,7 @@
+packer-fosdem-demo/output-*
+packer-fosdem-demo/packer_cache
+
+ansible-playbook-hammer/rpm-gpg-import
+ansible-playbook-hammer/foreman-ansible-modules
+ansible-playbook-hammer/Gemfile.lock
+ansible-playbook-hammer/*.log

@@ -1,0 +1,57 @@
+---
+- name: Create foreman backup directory
+  file:
+    path: /var/backup
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create foreman backup script
+  copy:
+    dest: /usr/local/bin/foreman_backup.sh
+    owner: root
+    group: root
+    mode: 0755
+    content: |
+      # Managed with Ansible, changes are overwritten
+      # https://github.com/theforeman/foreman_maintain/wiki/Backup#branchingrebasing-incremental-backups
+      #!/bin/bash -e
+      export PATH=/sbin:/bin:/usr/sbin:/usr/bin
+      DESTINATION=/var/backup
+      if [[ $(date +%w) == 0 ]]; then
+        foreman-maintain backup offline -y $DESTINATION
+      else
+        LAST=$(ls -td -- $DESTINATION/*/ | head -n 1)
+        foreman-maintain backup offline -y --incremental "$LAST" $DESTINATION
+      fi
+      exit 0
+
+- name: Create foreman backup crontab
+  copy:
+    dest: /etc/cron.d/foreman-backup
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      # Managed with Ansible, changes are overwritten
+      0 2 * * * root /usr/local/bin/foreman_backup.sh > /dev/null 2>&1
+
+- name: Create foreman-maintain logrotate rule
+  copy:
+    dest: /etc/logrotate.d/foreman-maintain
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      # Managed with Ansible, changes are overwritten
+      # Foreman-maintain logs:
+      /var/log/foreman-maintain/*.log {
+        daily
+        missingok
+        rotate 14
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+      }

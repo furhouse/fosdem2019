@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem 'hammer_cli', '0.15.1'
+gem 'hammer_cli_foreman', '0.15.1'
+gem 'hammer_cli_katello', '0.16.0'
+gem 'hammer_cli_csv', '2.3.1'

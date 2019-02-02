@@ -1,0 +1,93 @@
+---
+# workflow to create new version: comment version line, apply
+# then update version and uncomment it...
+- name: Publish and promote the content view
+  block:
+    - name: Publish and promote content view version 1.0 to Library
+      katello_content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        content_view: "{{ content_view_name }}"
+        organization: "{{ organization }}"
+        force: true
+        version: 2.0
+    - name: Promote "{{ content_view_name }}" Library to the Devel and Test environments
+      katello_content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        content_view: "{{ content_view_name }}"
+        organization: "{{ organization }}"
+        force: true
+        current_lifecycle_environment: Library
+        lifecycle_environments:
+          - Devel
+          - Test
+    - name: Promote version 1.0 to the Production environment
+      katello_content_view_version:
+        username: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        server_url: "{{ foreman_server_url }}"
+        verify_ssl: "{{ foreman_verify_ssl }}"
+        content_view: "{{ content_view_name }}"
+        organization: "{{ organization }}"
+        force: true
+        version: 2.0
+        lifecycle_environments:
+          - Production
+
+# katello_activation_key creates key, doesnt attach it to subscription
+- name: Create katello client activation key for Library
+  katello_activation_key:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "EL7-key"
+    organization: "{{ organization }}"
+    lifecycle_environment: "Library"
+    content_view: "{{ content_view_name }}"
+    subscriptions:
+        - name: "{{ katello_product }}"
+
+- name: Create katello client activation key for Test
+  katello_activation_key:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "EL7-key-Test"
+    organization: "{{ organization }}"
+    lifecycle_environment: "Test"
+    content_view: "{{ content_view_name }}"
+    subscriptions:
+        - name: "{{ katello_product }}"
+
+- name: Create katello client activation key for Devel
+  katello_activation_key:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "EL7-key-Devel"
+    organization: "{{ organization }}"
+    lifecycle_environment: "Devel"
+    content_view: "{{ content_view_name }}"
+    subscriptions:
+        - name: "{{ katello_product }}"
+
+- name: Create katello client activation key for Production
+  katello_activation_key:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    verify_ssl: "{{ foreman_verify_ssl }}"
+    name: "EL7-key-Production"
+    organization: "{{ organization }}"
+    lifecycle_environment: "Production"
+    content_view: "{{ content_view_name }}"
+    subscriptions:
+        - name: "{{ katello_product }}"

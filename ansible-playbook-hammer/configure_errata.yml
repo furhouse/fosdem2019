@@ -1,0 +1,40 @@
+---
+# https://www.lisenet.com/2018/katello-import-centos-errata-into-pulp/
+# requires ssh key setup
+# add var to enable, disabled by default
+- name: Install katello-agent without gpg check
+  yum:
+    name: katello-agent
+    disable_gpg_check: yes
+    state: present
+
+- name: Install required yum packages
+  package: name={{ item }} state=present
+  with_items:
+    - pulp-rpm-admin-extensions
+    - pulp-rpm-yumplugins
+    - perl-Text-Unidecode
+    - perl-XML-Simple
+    # - perl-XML-Parser
+
+- name: Clone pulp_centos_errata_import
+  git:
+    repo: https://github.com/rdrgmnzs/pulp_centos_errata_import.git
+    version: master
+    dest: /opt/pulp_centos_errata_import
+
+- name: copy pulp errata import script
+  copy:
+    src: "{{ playbook_dir }}/files/pulp_errata_sync.sh"
+    dest: /root/pulp_errata_sync.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create default SCAP content
+  shell:
+    cmd: |
+      foreman-rake foreman_openscap:bulk_upload:default
+  # args:
+  #   creates: /usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml
+  #   seems already present because of plugin installation
